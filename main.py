@@ -57,11 +57,13 @@ async def process_video(file: UploadFile = File(...)):
 
     subprocess.run(command)
 
-    return [
+    return {
+    "clips": [
         {
             "title": "Sample Clip",
-            "video_url": f"/outputs/{video_id}.mp4",
+            "video_url": f"https://your-app.onrender.com/outputs/{video_id}.mp4",
             "duration": "30s",
             "score": 90
         }
     ]
+}
