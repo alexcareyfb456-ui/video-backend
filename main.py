@@ -70,7 +70,7 @@ async def process_video(
     return [
         {
             "title": "Sample Clip",
-            "video_url": f"https://your-app.onrender.com/{output_path}",
+            "video_url": f"https://video-backend-mjx4.onrender.com/{output_path}",
             "duration": "30s",
             "score": 90
         }
