@@ -33,15 +33,35 @@ def health():
 
 
 @app.post("/process-video")
-async def process_video(file: UploadFile = File(...)):
+from fastapi import Form
+
+async def process_video(
+    file: UploadFile = File(None),
+    youtube_url: str = Form(None)
+):
     video_id = str(uuid.uuid4())
 
     input_path = f"{UPLOAD_DIR}/{video_id}.mp4"
     output_path = f"{OUTPUT_DIR}/{video_id}.mp4"
 
     # Save file
+    # Handle input
+if file:
     with open(input_path, "wb") as f:
         f.write(await file.read())
+
+elif youtube_url:
+    # For now, just return error (we'll fix later)
+    return {
+        "clips": [],
+        "error": "YouTube not supported yet"
+    }
+
+else:
+    return {
+        "clips": [],
+        "error": "No input provided"
+    }
 
     ffmpeg_path = ffmpeg.get_ffmpeg_exe()
 
