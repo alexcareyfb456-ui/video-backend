@@ -45,10 +45,12 @@ async def process_video(
 
     # Handle upload
     if file:
+    print("FILE RECEIVED:", file.filename)
         with open(input_path, "wb") as f:
             f.write(await file.read())
     else:
-        return []  # frontend expects array
+    print("NO FILE RECEIVED")
+    return []  # frontend expects array
 
     ffmpeg_path = ffmpeg.get_ffmpeg_exe()
 
