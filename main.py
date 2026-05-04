@@ -8,7 +8,6 @@ import imageio_ffmpeg as ffmpeg
 
 app = FastAPI()
 
-# CORS
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -23,7 +22,6 @@ OUTPUT_DIR = "outputs"
 os.makedirs(UPLOAD_DIR, exist_ok=True)
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
-# Serve files
 app.mount("/outputs", StaticFiles(directory="outputs"), name="outputs")
 app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
 
@@ -44,13 +42,13 @@ async def process_video(
     output_path = f"{OUTPUT_DIR}/{video_id}.mp4"
 
     # Handle upload
-if file:
-    print("FILE RECEIVED:", file.filename)
-    with open(input_path, "wb") as f:
-        f.write(await file.read())
-else:
-    print("NO FILE RECEIVED")
-    return [] # frontend expects array
+    if file:
+        print("FILE RECEIVED:", file.filename)
+        with open(input_path, "wb") as f:
+            f.write(await file.read())
+    else:
+        print("NO FILE RECEIVED")
+        return []
 
     ffmpeg_path = ffmpeg.get_ffmpeg_exe()
 
@@ -65,7 +63,6 @@ else:
 
     subprocess.run(command)
 
-    # fallback if ffmpeg fails
     if not os.path.exists(output_path):
         output_path = input_path
 
