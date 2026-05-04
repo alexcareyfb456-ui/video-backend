@@ -65,13 +65,11 @@ async def process_video(
 
     subprocess.run(command)
 
-    return {
-        "clips": [
-            {
-                "title": "Sample Clip",
-                "video_url": f"https://video-backend-mjx4.onrender.com/outputs/{video_id}.mp4",
-                "duration": "30s",
-                "score": 90
-            }
-        ]
+    return [
+    {
+        "title": "Sample Clip",
+        "video_url": f"https://your-app.onrender.com/outputs/{video_id}.mp4",
+        "duration": "30s",
+        "score": 90
     }
+]
