@@ -8,7 +8,7 @@ import imageio_ffmpeg as ffmpeg
 
 app = FastAPI()
 
-# Allow all origins
+# CORS
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -23,7 +23,7 @@ OUTPUT_DIR = "outputs"
 os.makedirs(UPLOAD_DIR, exist_ok=True)
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
-# Serve output files
+# Serve files
 app.mount("/outputs", StaticFiles(directory="outputs"), name="outputs")
 app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
 
@@ -43,12 +43,12 @@ async def process_video(
     input_path = f"{UPLOAD_DIR}/{video_id}.mp4"
     output_path = f"{OUTPUT_DIR}/{video_id}.mp4"
 
-    # Handle input
+    # Handle upload
     if file:
         with open(input_path, "wb") as f:
             f.write(await file.read())
     else:
-        return []
+        return []  # frontend expects array
 
     ffmpeg_path = ffmpeg.get_ffmpeg_exe()
 
@@ -61,17 +61,17 @@ async def process_video(
         output_path
     ]
 
-    result = subprocess.run(command, capture_output=True)
+    subprocess.run(command)
 
-# If ffmpeg failed, still return original video
-if not os.path.exists(output_path):
-    output_path = input_path
+    # fallback if ffmpeg fails
+    if not os.path.exists(output_path):
+        output_path = input_path
 
     return [
-    {
-        "title": "Sample Clip",
-        "video_url": f"https://your-app.onrender.com/{output_path}",
-        "duration": "30s",
-        "score": 90
-    }
-]
+        {
+            "title": "Sample Clip",
+            "video_url": f"https://your-app.onrender.com/{output_path}",
+            "duration": "30s",
+            "score": 90
+        }
+    ]
