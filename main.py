@@ -25,6 +25,7 @@ os.makedirs(OUTPUT_DIR, exist_ok=True)
 
 # Serve output files
 app.mount("/outputs", StaticFiles(directory="outputs"), name="outputs")
+app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
 
 
 @app.get("/health")
@@ -60,12 +61,16 @@ async def process_video(
         output_path
     ]
 
-    subprocess.run(command)
+    result = subprocess.run(command, capture_output=True)
+
+# If ffmpeg failed, still return original video
+if not os.path.exists(output_path):
+    output_path = input_path
 
     return [
     {
         "title": "Sample Clip",
-        "video_url": f"https://your-app.onrender.com/outputs/{video_id}.mp4",
+        "video_url": f"https://your-app.onrender.com/{output_path}",
         "duration": "30s",
         "score": 90
     }
