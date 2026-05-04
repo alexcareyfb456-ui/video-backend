@@ -44,13 +44,13 @@ async def process_video(
     output_path = f"{OUTPUT_DIR}/{video_id}.mp4"
 
     # Handle upload
-    if file:
+if file:
     print("FILE RECEIVED:", file.filename)
-        with open(input_path, "wb") as f:
-            f.write(await file.read())
-    else:
+    with open(input_path, "wb") as f:
+        f.write(await file.read())
+else:
     print("NO FILE RECEIVED")
-    return []  # frontend expects array
+    return [] # frontend expects array
 
     ffmpeg_path = ffmpeg.get_ffmpeg_exe()
 
@@ -72,7 +72,7 @@ async def process_video(
     return [
         {
             "title": "Sample Clip",
-            "video_url": f"https://video-backend-mjx4.onrender.com/{output_path}",
+            "video_url": f"https://video-backend-mjx4.onrender.com/outputs/{video_id}.mp4",
             "duration": "30s",
             "score": 90
         }
