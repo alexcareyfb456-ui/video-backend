@@ -4,6 +4,7 @@ from fastapi.staticfiles import StaticFiles
 import subprocess
 import os
 import uuid
+import imageio_ffmpeg as ffmpeg
 
 app = FastAPI()
 
@@ -41,14 +42,18 @@ async def process_video(file: UploadFile = File(...)):
         f.write(await file.read())
 
     # Cut first 30 sec + convert to vertical 9:16
-    command = [
-        "ffmpeg",
-        "-i", input_path,
-        "-t", "30",
-        "-vf", "scale=1080:1920",
-        "-y",
-        output_path
-    ]
+    import imageio_ffmpeg as ffmpeg
+
+ffmpeg_path = ffmpeg.get_ffmpeg_exe()
+
+command = [
+    ffmpeg_path,
+    "-i", input_path,
+    "-t", "30",
+    "-vf", "scale=1080:1920",
+    "-y",
+    output_path
+]
 
     subprocess.run(command)
 
