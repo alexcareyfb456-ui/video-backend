@@ -8,7 +8,7 @@ import imageio_ffmpeg as ffmpeg
 
 app = FastAPI()
 
-# Allow all origins (important)
+# Allow all origins
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -26,9 +26,11 @@ os.makedirs(OUTPUT_DIR, exist_ok=True)
 # Serve output files
 app.mount("/outputs", StaticFiles(directory="outputs"), name="outputs")
 
+
 @app.get("/health")
 def health():
     return {"status": "ok"}
+
 
 @app.post("/process-video")
 async def process_video(file: UploadFile = File(...)):
@@ -37,23 +39,21 @@ async def process_video(file: UploadFile = File(...)):
     input_path = f"{UPLOAD_DIR}/{video_id}.mp4"
     output_path = f"{OUTPUT_DIR}/{video_id}.mp4"
 
-    # Save uploaded video
+    # Save file
     with open(input_path, "wb") as f:
         f.write(await file.read())
 
-    # Cut first 30 sec + convert to vertical 9:16
-    import imageio_ffmpeg as ffmpeg
+    ffmpeg_path = ffmpeg.get_ffmpeg_exe()
 
-ffmpeg_path = ffmpeg.get_ffmpeg_exe()
-
-command = [
-    ffmpeg_path,
-    "-i", input_path,
-    "-t", "30",
-    "-vf", "scale=1080:1920",
-    "-y",
-    output_path
-]
+    # Cut first 30 seconds + convert to vertical
+    command = [
+        ffmpeg_path,
+        "-i", input_path,
+        "-t", "30",
+        "-vf", "scale=1080:1920",
+        "-y",
+        output_path
+    ]
 
     subprocess.run(command)
 
