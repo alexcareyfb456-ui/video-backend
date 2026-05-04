@@ -1,4 +1,4 @@
-from fastapi import FastAPI, UploadFile, File
+from fastapi import FastAPI, UploadFile, File, Form
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 import subprocess
@@ -33,8 +33,6 @@ def health():
 
 
 @app.post("/process-video")
-from fastapi import Form
-
 async def process_video(
     file: UploadFile = File(None),
     youtube_url: str = Form(None)
@@ -44,28 +42,18 @@ async def process_video(
     input_path = f"{UPLOAD_DIR}/{video_id}.mp4"
     output_path = f"{OUTPUT_DIR}/{video_id}.mp4"
 
-    # Save file
     # Handle input
-if file:
-    with open(input_path, "wb") as f:
-        f.write(await file.read())
-
-elif youtube_url:
-    # For now, just return error (we'll fix later)
-    return {
-        "clips": [],
-        "error": "YouTube not supported yet"
-    }
-
-else:
-    return {
-        "clips": [],
-        "error": "No input provided"
-    }
+    if file:
+        with open(input_path, "wb") as f:
+            f.write(await file.read())
+    else:
+        return {
+            "clips": [],
+            "error": "Upload a video file (YouTube not supported yet)"
+        }
 
     ffmpeg_path = ffmpeg.get_ffmpeg_exe()
 
-    # Cut first 30 seconds + convert to vertical
     command = [
         ffmpeg_path,
         "-i", input_path,
@@ -78,12 +66,12 @@ else:
     subprocess.run(command)
 
     return {
-    "clips": [
-        {
-            "title": "Sample Clip",
-            "video_url": f"https://your-app.onrender.com/outputs/{video_id}.mp4",
-            "duration": "30s",
-            "score": 90
-        }
-    ]
-}
+        "clips": [
+            {
+                "title": "Sample Clip",
+                "video_url": f"https://video-backend-mjx4.onrender.com/outputs/{video_id}.mp4",
+                "duration": "30s",
+                "score": 90
+            }
+        ]
+    }
