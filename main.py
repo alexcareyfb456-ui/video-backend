@@ -47,10 +47,7 @@ async def process_video(
         with open(input_path, "wb") as f:
             f.write(await file.read())
     else:
-        return {
-            "clips": [],
-            "error": "Upload a video file (YouTube not supported yet)"
-        }
+        return []
 
     ffmpeg_path = ffmpeg.get_ffmpeg_exe()
 
