@@ -63,7 +63,7 @@ async def process_video(
     output_path
 ]
 
-    subprocess.run(command, timeout=30)
+    subprocess.run(command, timeout=20)
 
     if not os.path.exists(output_path):
         output_path = input_path
