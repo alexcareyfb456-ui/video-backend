@@ -55,13 +55,13 @@ async def process_video(
     command = [
         ffmpeg_path,
         "-i", input_path,
-        "-t", "30",
+        "-t", "10",
         "-vf", "scale=1080:1920",
         "-y",
         output_path
     ]
 
-    subprocess.run(command)
+    subprocess.run(command, timeout=30)
 
     if not os.path.exists(output_path):
         output_path = input_path
