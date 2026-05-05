@@ -53,13 +53,15 @@ async def process_video(
     ffmpeg_path = ffmpeg.get_ffmpeg_exe()
 
     command = [
-        ffmpeg_path,
-        "-i", input_path,
-        "-t", "10",
-        "-vf", "scale=1080:1920",
-        "-y",
-        output_path
-    ]
+    ffmpeg_path,
+    "-i", input_path,
+    "-t", "5",              # only 5 seconds
+    "-vf", "scale=720:1280",  # smaller resolution
+    "-preset", "ultrafast",   # faster processing
+    "-crf", "28",             # lower quality = faster
+    "-y",
+    output_path
+]
 
     subprocess.run(command, timeout=30)
 
